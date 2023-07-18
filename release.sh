@@ -12,9 +12,6 @@ git tag ${version}
 # Replace the placeholder in main.aplf with the version
 sed -i.bak "s/{{VERSION}}/${version}/g" main.aplf
 
-# Remove the backup file created by sed
-rm main.aplf.bak
-
 # Push the new tag to the repository
 git push origin ${version}
 
@@ -35,3 +32,6 @@ upload_url=$(echo "$response" | /opt/homebrew/bin/jq -r .upload_url | sed -e "s/
 
 # Upload the release
 curl -XPOST -H "Authorization: token ${GITHUB_TOKEN}" -H "Content-Type: application/octet-stream" --data-binary "@main.aplf" "${upload_url}?name=main.aplf"
+
+# Put back the templated backup, as created by sed
+mv main.aplf.bak main.aplf
