@@ -26,10 +26,12 @@ json='{
 }'
 
 # Create a new release
-response=$(curl --data "$json" https://api.github.com/repos/xpqz/dyversion/releases?access_token=$GITHUB_TOKEN)
+response=$(curl -H "Authorization: token ${GITHUB_TOKEN}" --data "$json" https://api.github.com/repos/xpqz/dyversion/releases)
+
+echo "$response"
 
 # Get upload_url from the response
-upload_url=$(echo "$response" | jq -r .upload_url | sed -e "s/{?name,label}//")
+upload_url=$(echo "$response" | /opt/homebrew/bin/jq -r .upload_url | sed -e "s/{?name,label}//")
 
 # Upload the release
 curl -XPOST -H "Authorization: token ${GITHUB_TOKEN}" -H "Content-Type: application/octet-stream" --data-binary "@main.aplf" "${upload_url}?name=main.aplf"
